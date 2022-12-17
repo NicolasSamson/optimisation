@@ -26,7 +26,9 @@ def calcule_path(matrice_position_initial,matrice_position_finale,path,matrice_c
     i=0
     list_non_bougee = [0,1,2,3,4,5,6]
     list_piece_pas_bougee_avec_ii = [0,1,2,3,4,5,6]
-    while piece_planned <7:
+    nbr_iteration_globale = 0
+    order_validity = True
+    while piece_planned <7 and order_validity==True:
         if i == i_max:
             i_max =0 
         # Calcule distance des pièces
@@ -88,16 +90,19 @@ def calcule_path(matrice_position_initial,matrice_position_finale,path,matrice_c
         
         #piece_trouvee =False
         i+= 1
+        nbr_iteration_globale += 1
+        if nbr_iteration_globale>7: # 7 fois 
+            order_validity = False
+            print("et une autre solution mauvaise")
     
-    if len(list_finale) != 14:
-        test= "stop"
+    
     
     if to_save ==True:
         df_final = DataFrame(list_finale)
 
         df_final.to_csv(path,sep=";",line_terminator=';\n',index=False,header=False)
         print("path_created_and_saved")
-    return list_finale,ordre_pour_les_tortue
+    return list_finale,ordre_pour_les_tortue,order_validity
 
 
 

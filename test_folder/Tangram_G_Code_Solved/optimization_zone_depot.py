@@ -24,7 +24,7 @@ def fct_obj2(pos_repere,args):
     distance = norm(erreur_pose,ord=2,axis=1)
     #print(test)
 
-    indice_distance = sum(distance)
+    indice_distance = sum(distance)**2
     # Criteria of angle 
 
     gain_erreur_angle = 0#100000000

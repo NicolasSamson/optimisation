@@ -1,4 +1,4 @@
-from ntpath import join
+from os.path import join
 import turtle as t
 
 from numpy import array,pi,sin,cos,radians,dot
@@ -237,10 +237,13 @@ def affiche_tout_graphiquement(width,height,position_initiale,position_finale,pa
     list_turtle_ordonne = []
     list_position_offset = []
     for i in range(len(list_final_point)):
-        list_turtle_ordonne.append(list_turtle[ordre_pour_les_tortue[i]])
-        offset = array_offset[ordre_pour_les_tortue[i]]
-        point = list_final_point[i]
-        list_position_offset.append(point+offset)
+        if list_final_point[i][0]==9999:
+            continue
+        else:
+            list_turtle_ordonne.append(list_turtle[ordre_pour_les_tortue[i]])
+            offset = array_offset[ordre_pour_les_tortue[i]]
+            point = list_final_point[i]
+            list_position_offset.append(point+offset)
     # Print the background
     print_background(width,height,sc_test)
 

@@ -48,7 +48,8 @@ def pos_finale_sur_piece(i_piece,mat_pos_initial,pos_rel_sol):
     pos_piece_initi = mat_pos_initial[i_piece,:]
     erreur = sum(pos_piece_final[0:2]-pos_piece_initi[0:2])
     if erreur <1:
-            print("yeahhh")
+            #print("yeahhh")
+            test=2
     else:
         raise ValueError("Erreur dans la rotation")
     
@@ -100,24 +101,24 @@ def calculate_final_position_of_in_place_solution(mat_pos_initial,pos_rel_sol,wi
     matrice_green4 =  copy.deepcopy(mat_pos_initial) 
     matrice_green4[4,2] += 270
 
-    # Ajoute deuxième solution chaque triangle 
-    matrice_rouge2 = copy.deepcopy(mat_pos_initial) 
-    matrice_rouge2[0,2] += 90
+    # Ajoute deuxième solution parallellograme
+    matrice_para = copy.deepcopy(mat_pos_initial) 
+    matrice_para[5,2] += 180
     
     
     # Liste matrice position initiale
     list_mat_pos_ini = [mat_pos_initial,mat_pos_initial,mat_pos_initial,mat_pos_initial,mat_pos_initial,
-    mat_pos_initial,mat_pos_initial,matrice_green2,matrice_green3,matrice_green4]
+    mat_pos_initial,mat_pos_initial,matrice_green2,matrice_green3,matrice_green4,matrice_para]
 
     column_name_with_sol = copy.deepcopy(column_name[0:7]) 
-    column_name_with_sol.extend(["square_green_2","square_green_3","square_green_4"])
+    column_name_with_sol.extend(["square_green_2","square_green_3","square_green_4","para_180"])
 
     nbr_solution = len(list_mat_pos_ini)
     nbr_piece = nbr_solution
     
     dico_sol ={}
     
-    list_i_piece = [0,1,2,3,4,5,6,4,4,4]
+    list_i_piece = [0,1,2,3,4,5,6,4,4,4,5]
 
     for i_sol in range(nbr_solution):
         # Si on analyse solution supp, i_piece=square
@@ -143,14 +144,38 @@ def calculate_final_position_of_in_place_solution(mat_pos_initial,pos_rel_sol,wi
 
             #4 Generate the path
             uselesss_path = r""
-            list_finale,ordre_pour_les_tortue = cp.calcule_path(mat_pos_initial,piece_pos_finale,uselesss_path,ovelap_matrice,to_save=False)
-        
-            dico_sol[column_name_with_sol[i_sol]] = {"list_point": list_finale,"ordre_tortue":ordre_pour_les_tortue,"valid":True,"position_finale":piece_pos_finale,"number_point":len(ordre_pour_les_tortue)}
+            list_finale,ordre_pour_les_tortue,order_validity = cp.calcule_path(mat_pos_initial,piece_pos_finale,uselesss_path,ovelap_matrice,to_save=False)
+
+            if order_validity==True:
+                dico_sol[column_name_with_sol[i_sol]] = {"list_point": list_finale,"ordre_tortue":ordre_pour_les_tortue,"valid":True,"position_finale":piece_pos_finale,"number_point":len(ordre_pour_les_tortue)}
+            else: 
+                dico_sol[column_name_with_sol[i_sol]] = {"list_point": [],"ordre_tortue":[],"valid":False,"position_finale":piece_pos_finale,"number_point":0}
+
         else:
             dico_sol[column_name_with_sol[i_sol]] = {"list_point": [],"ordre_tortue":[],"valid":False,"position_finale":piece_pos_finale,"number_point":0}
 
     return dico_sol
+def generate_10_sol_with_minimized_distance(width,height,position_rel_solution,mat_pos_initial,solution_info_height_width,column_name,dico_G_code_solution):
+    # 1 Calculate the solution with the minimal distance travel
+        
 
+    for i in range(10):
+        # 1.1 génère repère initial
+        pos_repere_initial = ozd.generate_first_guess(width,height)
+
+        # 1.2 calculate the optimal position de centre.
+        opti_centre = ozd.optimize_the_position(pos_repere_initial,position_rel_solution,mat_pos_initial,array(solution_info_height_width))
+        # 1.3 calculate the final position of each piece 
+        position_finale = ozd.calculate_pos_final_each_piece(opti_centre.x,position_rel_solution)
+
+        matrice_conflit = tcp.count_number_piece_overlap(mat_pos_initial,position_finale,column_name)
+
+        # 1.4 Génère la trajectoire
+        useless_path = ""
+        list_final_point,ordre_pour_les_tortue,order_validity = cp.calcule_path(mat_pos_initial,position_finale,useless_path,matrice_conflit,to_save=False)
+        #1.5 Add to the posssible solution
+        dico_G_code_solution[f"Opti_zone_depot_{i}"] = {"list_point": list_final_point,"ordre_tortue":ordre_pour_les_tortue,"valid":True,"position_finale":position_finale,"number_point":len(ordre_pour_les_tortue)}
+    return dico_G_code_solution
 def generate_all_the_tested_solution(mat_pos_initial,position_rel_solution,solution_info_height_width,width,height,column_name):
     """Generates the path _associate to each valid solution : 1. Solution ou distance minimisé. 2. Solution ou on laisse une palce à la même place."""
     # 0 Génère les solutions in place (une pièce reste à la même place) 
@@ -160,25 +185,10 @@ def generate_all_the_tested_solution(mat_pos_initial,position_rel_solution,solut
 
 
 
-    # 1 Calculate the solution with the minimal distance travel
-        # 1.1 génère repère initial
-    pos_repere_initial = ozd.generate_first_guess(width,height)
-
-        # 1.2 calculate the optimal position de centre.
-    opti_centre = ozd.optimize_the_position(pos_repere_initial,position_rel_solution,mat_pos_initial,array(solution_info_height_width))
-
-        # 1.3 calculate the final position of each piece 
-    position_finale = ozd.calculate_pos_final_each_piece(opti_centre.x,position_rel_solution)
-
-    matrice_conflit = tcp.count_number_piece_overlap(mat_pos_initial,position_finale,column_name)
-
-        # 1.4 Génère la trajectoire
-    useless_path = ""
-    list_final_point,ordre_pour_les_tortue = cp.calcule_path(mat_pos_initial,position_finale,useless_path,matrice_conflit,to_save=False)
+    dico_G_code_solution = generate_10_sol_with_minimized_distance(width,height,position_rel_solution,mat_pos_initial,solution_info_height_width,column_name,dico_G_code_solution)
     
     # 
     
-    dico_G_code_solution["Opti_zone_depot"] = {"list_point": list_final_point,"ordre_tortue":ordre_pour_les_tortue,"valid":True,"position_finale":position_finale,"number_point":len(ordre_pour_les_tortue)}
     
     return dico_G_code_solution
 

@@ -11,11 +11,14 @@ import optimization_zone_depot as ozd
 import create_path as cp
 from os.path import join
 
-import matplotlib.pyplot as plt
-
-time_pick_place = 4604/1000 # ms
+#import matplotlib.pyplot as plt
 
 
+
+#time_pick_place=3804/1000
+#df = DataFrame({"time":[3804/1000]})
+#df.to_csv(r"test_folder\Tangram_G_Code_Solved\interpolate_funct_time\time_pick_and_drop.csv")
+#print(time_pick_place=df.time[0])
 def create_interpolation_function(general_path):
     # Create the interpolate function of each axes. 
     
@@ -28,8 +31,9 @@ def create_interpolation_function(general_path):
     df_y = read_csv(path_y,header=None,names = ["deltas","time1","time2"])
     df_theta = read_csv(path_theta,header= None,names = ["deltas","time1","time2"])
 
-
-
+    df_time = read_csv(join(general_path,r"interpolate_funct_time\time_pick_and_drop.csv")) # 3804/1000 # ms
+    time_pick_place=df_time.time[0]
+    
     interpx = interp1d(df_x["deltas"],df_x["time1"],kind="nearest")
     interpy = interp1d(df_y["deltas"],df_y["time1"],kind="nearest")
     interptheta = interp1d(df_theta["deltas"],df_theta["time1"],kind="nearest")
@@ -45,11 +49,11 @@ def create_interpolation_function(general_path):
     #plt.legend()
     #plt.show()
     
-    return interpx,interpy,interptheta
+    return interpx,interpy,interptheta,time_pick_place
 
 
 
-def calculate_tim_of_a_solution(sol,interpx,interpy,interptheta):
+def calculate_tim_of_a_solution(sol,interpx,interpy,interptheta,time_pick_place):
     """Calcualte the time associated with each movement for all axis and takes the longest one"""
     # 1 calculate the delta x, delta y and delta theta. Theta_i =0 donc theta = delta tetha
     #dico_sol[column_name_with_sol[i_sol]] = {"list_point": [],"ordre_tortue":[],"valid":False,"position_finale":piece_pos_finale,"number_point":0}
@@ -78,7 +82,7 @@ def calculate_tim_of_a_solution(sol,interpx,interpy,interptheta):
     sol["max_time"] = max_time
     sol["time_array"] = matrix_time
     sol["arg_max"] = arg_max
-
+    #print(time_pick_place)
     total_time_pick_and_place =delta_x_abso.shape[0]/2 *time_pick_place # Nbr piece picked *temps associé
     
     sol["max_time"] = max_time
@@ -97,7 +101,7 @@ def calculate_tim_of_a_solution(sol,interpx,interpy,interptheta):
 
 def calculate_time_all_solution(dico_sol_valid_path,general_path):
     # 1 generate all the interpolate function 
-    interpx,interpy,interptheta = create_interpolation_function(general_path)
+    interpx,interpy,interptheta,time_pick_place = create_interpolation_function(general_path)
     
 
     #2 generate calculate thte time for each solution
@@ -105,7 +109,7 @@ def calculate_time_all_solution(dico_sol_valid_path,general_path):
     for sol_name, sol in dico_sol_valid_path.items():
         
         if sol["valid"] == True:
-            sol_with_time = calculate_tim_of_a_solution(sol,interpx,interpy,interptheta)
+            sol_with_time = calculate_tim_of_a_solution(sol,interpx,interpy,interptheta,time_pick_place)
             dico_sol_valid_path[sol_name] = sol_with_time
             
         else:

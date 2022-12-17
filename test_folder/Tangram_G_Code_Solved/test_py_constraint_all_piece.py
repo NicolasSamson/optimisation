@@ -6,7 +6,7 @@ from numpy.linalg import norm,inv
 from numpy.random import rand
 
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 def craete_array_point_between_2_points(c1,c2,n):
     delta_x_y = (c2-c1)/n
@@ -297,7 +297,7 @@ def calculate_the_absolute_coordinate_of_each_point_of_each_figure(matrice_posit
         coin_ = list_sommet_chaque_form_rel[i]
 
         coin_absolue = calculate_pos_final_each_piece(position_centre_piece,coin_)
-        plt.plot(coin_absolue[:,0],coin_absolue[:,1])
+        #plt.plot(coin_absolue[:,0],coin_absolue[:,1])
         list_sommet_position_absolue.append(coin_absolue)
     #plt.show()
     return list_sommet_position_absolue,list_sommet_chaque_form_rel,list_longueur

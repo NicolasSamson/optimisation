@@ -12,7 +12,7 @@ import create_path as cp
 from os.path import join,isfile
 from os import listdir
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 
 def generates_the_bilan_of_the_solution(dico_solution_with_time,general_path):
@@ -64,6 +64,7 @@ def generates_the_bilan_of_the_solution(dico_solution_with_time,general_path):
         indice_simul = 0
     
     size = len(list_time)
+    
     col_indice_simulation = [indice_simul]*size
     ratio_sol = [round(nbr_valid_solution/(nbr_valid_solution+nbr_invalid_solution)*100)]*size
     nbr_sol_valid_col = [nbr_valid_solution]*size
