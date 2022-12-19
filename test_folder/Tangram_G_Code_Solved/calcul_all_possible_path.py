@@ -174,7 +174,7 @@ def generate_10_sol_with_minimized_distance(width,height,position_rel_solution,m
         useless_path = ""
         list_final_point,ordre_pour_les_tortue,order_validity = cp.calcule_path(mat_pos_initial,position_finale,useless_path,matrice_conflit,to_save=False)
         #1.5 Add to the posssible solution
-        dico_G_code_solution[f"Opti_zone_depot_{i}"] = {"list_point": list_final_point,"ordre_tortue":ordre_pour_les_tortue,"valid":True,"position_finale":position_finale,"number_point":len(ordre_pour_les_tortue)}
+        dico_G_code_solution[f"Opti_zone_depot_{i}"] = {"list_point": list_final_point,"ordre_tortue":ordre_pour_les_tortue,"valid":order_validity,"position_finale":position_finale,"number_point":len(ordre_pour_les_tortue)}
     return dico_G_code_solution
 def generate_all_the_tested_solution(mat_pos_initial,position_rel_solution,solution_info_height_width,width,height,column_name):
     """Generates the path _associate to each valid solution : 1. Solution ou distance minimisé. 2. Solution ou on laisse une palce à la même place."""

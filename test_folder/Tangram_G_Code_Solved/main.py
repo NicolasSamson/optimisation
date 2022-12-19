@@ -8,7 +8,8 @@ finish_import = time()
 
 
 print("time to import ",finish_import-start_import)
-run(affichage_graphique=1,select_tangram=3,random_generation=1)
+for i in range(500):
+    run(affichage_graphique=0,select_tangram=1,random_generation=1)
 
 
 time_to_run = time()
