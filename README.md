@@ -16,7 +16,7 @@ Ces deux hypothèses tendent chacune vers une méthode d’optimisation distinct
 2.	Puisqu’on cherche à minimiser la prise de pièces, certaines pièces ne pourront pas être déplacées. En réalité, considérant le placement initial aléatoire des pièces, il n’y a qu’une seule pièce qui peut ne pas être déplacée. C’est autour de cette pièce qu’on peut construire notre solution.
 Ces deux méthodes permettent chacune de générer une ou plusieurs matrices de solution. Les étapes de l’algorithme d’optimisation sont représentées à la figure 1.
  
-![alt text for screen readers](image/image1.png "Text to show on mouseover")
+![alt text for screen readers](image/Image1.png "Text to show on mouseover")
  
 Figure 1: Représentation schématique des principales étapes de l'optimisation en temps des trajectoires.
 
